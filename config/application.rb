@@ -24,7 +24,8 @@ module Rails
 
   class Application < Engine
     # snip
-
+  end
+end
 
 module BlogApi
   class Application < Rails::Application
