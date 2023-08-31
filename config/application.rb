@@ -19,8 +19,37 @@ require "action_cable/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 #Bundler.require(:default, :assets, Rails.env)
+module Rails
+  # snip
 
+  class Application < Engine
+    # snip
 
+    def secret_key_base
+      if Rails.env.development? || Rails.env.test?
+        secrets.secret_key_base ||= generate_development_secret
+      else
+        validate_secret_key_base(
+          ENV["SECRET_KEY_BASE"] || credentials.secret_key_base || secrets.secret_key_base
+        )
+      end
+    end
+  end
+end
+
+def secrets
+  @secrets ||= begin
+    secrets = ActiveSupport::OrderedOptions.new
+    files = config.paths["../development_secret.txt"].existent
+    files = files.reject { |path| path.end_with?(".enc") } unless config.read_encrypted_secrets
+    secrets.merge! Rails::Secrets.parse(files, env: Rails.env)
+
+    # Fallback to config.secret_key_base if secrets.secret_key_base isn't set
+    secrets.secret_key_base ||= config.secret_key_base
+
+    secrets
+  end
+end
 
 module BlogApi
   class Application < Rails::Application
