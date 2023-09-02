@@ -8,10 +8,20 @@ default: &default # adapter: sqlite3
   adapter: postgresql
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: user
+  username: shouta
   password: pass
   host: localhost
+  port: 5432
   timeout: 5000
+  production:
+# $  pg_ctl start #起動
+# server started
+
+# $  pg_ctl status #確認
+# pg_ctl: server is running
+
+# $  pg_ctl stop #終了
+# server stopped
 
 development:
   <<: *default
